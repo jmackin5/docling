@@ -67,7 +67,16 @@ def process_pdf(source):
     result = converter.convert(source)
 
     return result.document.export_to_markdown()
-    print(result.document.export_to_markdown())  # output: "## Docling Technical Report[...]"
+    #print(result.document.export_to_markdown())  # output: "## Docling Technical Report[...]"
+
+def save_markdown_to_file(content, output_file):
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(content)
+    return output_file
+
+def load_markdown_from_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 
 # online_context = process_online_pdf("https://arxiv.org/pdf/2408.09869")
@@ -75,6 +84,10 @@ def process_pdf(source):
 # print(answer)
 
 
-online_context = process_online_pdf("Employee_Handbook_Fall_2025.pdf")
+online_context = process_pdf("https://arxiv.org/pdf/2408.09869")
+
+
+save_markdown_to_file(online_context, "output.md")
+online_context = load_markdown_from_file("output.md")
 answer = ask_document_question_free("How much PTO do i have in my first year ? ", online_context)
 print(answer)
