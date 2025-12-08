@@ -9,7 +9,7 @@ if processing_docs:
     docling.save_markdown_to_file(online_context, "output.md")
 
 
-question = "Is the model pipeline extensible, and can you tell me what line or lines it is defined on ? "
+question = "Is the model pipeline extensible ? "
 
 online_context = docling.load_markdown_from_file("output.md")
 answer,verification,gen = docling.answer_question(question, online_context)

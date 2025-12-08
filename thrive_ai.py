@@ -23,8 +23,34 @@
 
 class ThriveAiDocling():
     def __init__(self):
+        self.memory_file = "memory.json"
         self.verified_memory = []
         pass
+
+
+
+    def load_memory(self):
+        import json 
+        import os
+
+        if not os.path.exists(self.memory_file):
+            return {}
+        with open(self.memory_file, "r") as f:
+            return json.load(f)
+
+    def save_memory(self,memory_data):
+        import json
+        with open(self.memory_file, "w") as f:
+            json.dump(memory_data, f, indent=4)
+
+    def add_verified_item(self,question, answer, score):
+        memory = self.load_memory()
+        memory[question] = {
+            "answer": answer,
+            "score": score
+        }
+        self.save_memory(memory)
+
 
     # #Need OpenAi key
     def ask_document_question(self, question, markdown_content):
@@ -167,27 +193,28 @@ class ThriveAiDocling():
 
         return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+    #Need to adjust threshold to determine memory match sensitivity
     def search_memory(self,query_embedding, memory, threshold=0.85):
         best = None
         best_score = 0
 
         for item in memory:
-            sim = self.cosine(query_embedding, item["embedding"])
+            sim = self.cosine(query_embedding, self.embed(item) ) #item["embedding"])
             if sim > best_score:
                 best_score = sim
                 best = item
 
         if best and best_score >= threshold:
-            return best
+            return memory[best]
         return None
     
     def answer_question(self,question,markdown_content):
         q_embed = self.embed(question)
 
-        # 1. Check if similar verified Q exists
-        match = self.search_memory(q_embed, self.verified_memory)
+        # # 1. Check if similar verified Q exists
+        match = self.search_memory(q_embed, self.load_memory())
         if match:
-            return match["answer"], "FROM_MEMORY"
+            return match["answer"],match, "FROM_MEMORY" #match["answer"], "FROM_MEMORY"
 
         # 2. Else run normal RAG (Docling + LLM)
         llm_answer = self.ask_document_question(question,markdown_content)  # Responder agent
@@ -197,30 +224,6 @@ class ThriveAiDocling():
 
         # 3. If answer is high-confidence, store it
         if score >= 85:
-            self.verified_memory.append({
-                "question": question,
-                "answer": llm_answer,
-                "embedding": q_embed,
-                "verification_score": score
-            })
+            self.add_verified_item(question, llm_answer, score)
 
         return llm_answer,verification,"NEW_GENERATION"
-
-
-# processing_docs = False 
-
-# if processing_docs: 
-#     online_context = process_pdf("https://arxiv.org/pdf/2408.09869")
-#     save_markdown_to_file(online_context, "output.md")
-
-
-
-# question = "Is the model pipeline extensible, and can you tell me what line or lines it is defined on ? "
-
-# online_context = load_markdown_from_file("output.md")
-# answer = ask_document_question(question, online_context)
-
-
-# verification_result = verification_prompt(question, answer, online_context)
-# print(answer)
-# print("\nVERIFICATION RESULT:\n", verification_result)

@@ -1,0 +1,10 @@
+{
+    "Is the model pipeline extensible, and can you tell me what line or lines it is defined on ? ": {
+        "answer": "- Yes. The model pipeline is extensible.\n- It is defined in section 3.4 Extensibility. The document states that the model pipeline can be customized by sub-classing from an abstract baseclass (BaseModelPipeline) or cloning the default pipeline, and that custom pipeline classes can be provided to the main document conversion methods. Implementations must satisfy the Python Callable interface, with __call__ accepting an iterator over pages and producing an augmented iterator.",
+        "score": 100
+    },
+    "Is the model pipeline extensible ? ": {
+        "answer": "Yes.\n\n- Docling supports extensibility of the model pipeline by allowing you to sub-class from BaseModelPipeline or clone the default pipeline to create a custom one.\n- You can instantiate and pass a custom pipeline class as an argument to the main document conversion methods.\n- Custom model implementations must satisfy the Python Callable interface: the __call__ method takes an iterator over page objects and returns an iterator with augmented PagePredictions data.",
+        "score": 100
+    }
+}
