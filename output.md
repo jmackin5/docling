@@ -177,39 +177,6 @@ In this section, we will present several aspects related to the performance of o
 
 In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 × 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document.
 
-Table 2: Prediction perlormance (mAP@0.5-0.95) of object detection networks on DocLayNet test set. The MRCNN (Mask R-CNN) and FRCNN (Faster R-CNN) models with ResNet-50 or ResNet-101 beckbone were rained based on the network architecturesfrom the detectron2 model zoo (Mask R-CNN R50, R101-FPN 3x, Faster R-CNN R101-FPN 3x), with default configurations. The YOLO implementation utized was YOLOv5x6 [13]. All models were initialised using pre-trained weightsfrom the COCO 2017 dataset.
-
-|                | human   |   MRCNN |   MRCNNFRCNN |      |   YOLO |
-|----------------|---------|---------|--------------|------|--------|
-| Caption        | 84-89   |    68.4 |         71.5 | 70.1 |   77.7 |
-| Footnote       | 83-91   |    70.9 |         71.8 | 73.7 |   77.2 |
-| Formula        | 83-85   |    60.1 |         63.4 | 63.5 |   66.2 |
-| List-item      | 89-48   |    81.2 |         80.8 | 81   |   86.2 |
-| Page-ooer      | 93-94   |    61.6 |         59.3 | 58.9 |   61.1 |
-| Page-header    | 85-89   |    71.9 |         70   | 72   |   67.9 |
-| Picture        | 69-71   |    71.7 |         72.7 | 72   |   77.1 |
-| Section-header | 83-84   |    67.6 |         69.3 | 68.4 |   74.6 |
-| Table          | 77-81   |    82.2 |         82.9 | 82.2 |   86.3 |
-| x1             | 84-86   |    84.6 |         85.8 | 85.4 |   88.1 |
-| Title          | 60-72   |    76.7 |         80.4 | 79.9 |   82.7 |
-| AlIl           | 82-83   |    72.4 |         73.5 | 73.4 |   76.8 |
-
-to avoid this at any cost in order to have clear, unbiased baseline numbers for human dcument-layout annotation. hird, we introduced the feature of snapping boxes around text segments to obtain a pixel-accurate annotation and again reduce time and effort. The CCS -pxa fjeund je o sjoo-xe posopu oug punoe xoq-upunoq wnwu o o xoq umep-jesnne syuus fgeogewone joo uogeqouue based segments, which excludes only Table and Picture For the later, we instructed annotation staff to minimise inclusion of surrounding whitespace while including all graphical lines. A downside of snapping boxes to enclosed text cellsis that some wrongly parsed PDF pages cannot be annotated correctly and need to be skipped. Fourth, we established a way to flag pages as rejected for cases where no valid annotation according to the label guidelines could be achieved. Example cases for this would be PDF pages that render incorrectly or contain layouts that are impossible to capture with non-overlapping rectangles. Such rejected pages are not contained in the final dataset. With all these measures in place, experienced annotation staff managed to annotate a single page in a typical timeframe of 20s to 60s, depending on its complexity.
-
-## 5EXPERIMENTS
-
-The primary goal of DocLayNet is to obtain high-quality ML models capable of accurate document-layout analysis on a wide variety of challenging layouts. As discussed in Section 2, object detection models are currently the easiest to use, due to the standardisation of ground-truth data in COCO format [16] and the availability of general frameworks such as detectron2 [17]. Furthemore, baseline numbers in PubLayNet and DocBank were obtained using standard object detection models such as Mask R-CNN and Faster R-CNN. As such, we will relate to these object detection methods in this
-
-Figure 5: Prediction performance (mAP@0.5-0.95) of a Mask R-CNN network with ResNet50 backbone trained on increasing fractions of the DocLayNet dataset. The leaming curve flattens around the 80% mark, indicating that increasing the size of the DocLayNet dataset with simlar data ill not yield significantly better predictions.
-
-paper and leave the detaled evaluation of more reoent methods mentioned in Section 2 for future work.
-
-In this section, we will present several aspects related to the performance of object detection models on DocLayNet. Similarly as in 0 S'0 wo ofue pu sdeμano o  (dvw) uospeud oene ueu Susn suogoped e po Agenb u aenje m om oeqnd 0.95 in steps of 0.05 (mAP@0.5-0.95). These scores are computed by leveraging the evaluation code provided by the COCO API[16]
-
-## BaselinesforObjectDetection
-
-In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 × 1025 pbxels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overallbetween 6 and 0 eug uogeopu poo6 e senj6 sL sobed popeoue-edjμ uo suogegoue ueunq esujed oug wo. pnduoo dvw oug ueg emo %01 DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixelupoau auou ou puey saugo au uo suogopeud sogeq ueqo o djou lou sep soxoq-ugpunoq wou panuap uogeuoubes oteu poseq Yolov5x model does very welland even out-performs humans on selected labels such as Text, Table and Picture  Thisis not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document.
-
 Figure 3: Page 6 of the DocLayNet paper. If recognized, metadata such as authors are appearing first under the title. Elements recognized as page headers or footers are suppressed in Markdown to deliver uninterrupted content in reading order. Tables are inserted in reading order. The paragraph in '5. Experiments' wrapping over the column end is broken up in two and interrupted by the table.
 
 KDD '22, August 14-18, 2022, Washington, DC, USA
