@@ -18,8 +18,3 @@ print("GENERATION TYPE:", gen)
 print("\nVERIFICATION SCORE:\n", verification['score'])
 print("ANSWER:\n", answer)
 
-
-# answer = docling.ask_document_question(question, online_context)
-# verification_result = docling.verification_prompt(question, answer, online_context)
-# print(answer)
-# print("\nVERIFICATION RESULT:\n", verification_result)
