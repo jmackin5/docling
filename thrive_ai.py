@@ -1,25 +1,4 @@
 
-#pip3 install docling
-#sudo apt-get install libgl1-mesa-glx libglib2.0-0
-#
-#Free AI
-#curl -fsSL https://ollama.ai/install.sh | sh
-#ollama pull llama3.2:3b
-# ...existing code...
-import os
-# remove fallback variable and try to force CPU usage
-os.environ.pop("PYTORCH_ENABLE_MPS_FALLBACK", None)
-os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "0"
-
-# import torch and try to disable MPS backend flags before docling imports it
-import torch
-torch.backends.mps.is_available = lambda : False
-torch.backends.mps.is_built = lambda : False
-try:
-    torch.set_default_device("cpu")
-except Exception:
-    pass
-
 
 class ThriveAiDocling():
     def __init__(self):
