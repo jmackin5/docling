@@ -1,24 +1,24 @@
 
-# #pip3 install docling
-# #sudo apt-get install libgl1-mesa-glx libglib2.0-0
-# #
-# #Free AI
-# #curl -fsSL https://ollama.ai/install.sh | sh
-# #ollama pull llama3.2:3b
-# # ...existing code...
-# import os
-# # remove fallback variable and try to force CPU usage
-# os.environ.pop("PYTORCH_ENABLE_MPS_FALLBACK", None)
-# os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "0"
+#pip3 install docling
+#sudo apt-get install libgl1-mesa-glx libglib2.0-0
+#
+#Free AI
+#curl -fsSL https://ollama.ai/install.sh | sh
+#ollama pull llama3.2:3b
+# ...existing code...
+import os
+# remove fallback variable and try to force CPU usage
+os.environ.pop("PYTORCH_ENABLE_MPS_FALLBACK", None)
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "0"
 
-# # import torch and try to disable MPS backend flags before docling imports it
-# import torch
-# torch.backends.mps.is_available = lambda : False
-# torch.backends.mps.is_built = lambda : False
-# try:
-#     torch.set_default_device("cpu")
-# except Exception:
-#     pass
+# import torch and try to disable MPS backend flags before docling imports it
+import torch
+torch.backends.mps.is_available = lambda : False
+torch.backends.mps.is_built = lambda : False
+try:
+    torch.set_default_device("cpu")
+except Exception:
+    pass
 
 
 class ThriveAiDocling():
@@ -101,15 +101,30 @@ class ThriveAiDocling():
         
         return json.loads(response.text)['response']
 
-
     def process_pdf(self, source):
-        from docling.document_converter import DocumentConverter 
-        #source = "https://arxiv.org/pdf/2408.09869"  # document per local path or URL
+        from docling.document_converter import DocumentConverter
         converter = DocumentConverter()
-        result = converter.convert(source)
 
-        return result.document.export_to_markdown()
-        #print(result.document.export_to_markdown())  # output: "## Docling Technical Report[...]"
+        # If a list/tuple of sources is passed, convert each and combine results
+        if isinstance(source, (list, tuple)):
+            print(f"Processing {len(source)} documents...")
+            parts = []
+            for idx, src in enumerate(source, start=1):
+                try:
+                    result = converter.convert(src)
+                    md = result.document.export_to_markdown()
+                    # Add a simple separator between documents
+                    parts.append(f"<!-- Document {idx}: {src} -->\n\n" + md)
+                except Exception as e:
+                    # keep behavior simple: warn and continue with other docs
+                    print(f"Warning: failed to convert {src}: {e}")
+            return "\n\n---\n\n".join(parts)
+
+        else:
+            print(f"Processing single document...")
+            # Single source behavior (unchanged)
+            result = converter.convert(source)
+            return result.document.export_to_markdown()
 
     def save_markdown_to_file(self, content, output_file):
         with open(output_file, 'w', encoding='utf-8') as f:
@@ -139,9 +154,9 @@ class ThriveAiDocling():
 
         Return your answer **as strict JSON** with the following keys:
         - score: integer (0–100)
-        - supported_claims: list of strings
-        - unsupported_claims: list of strings
-        - contradictory_claims: list of strings
+        - supported_claims: dictionary following this format 'pdf_sections': [list of section titles where supported chunk is found], 'chunks': [list of supporting chunks]
+        - unsupported_claims: dictionary following this format  'pdf_sections': [list of section titles where unsupported chunk is found], 'chunks': [list of unsupported chunks]
+        - contradictory_claims: dictionary following this format  'pdf_sections': [list of section titles where contradictory chunk is found], 'chunks': [list of contradictory chunks]
         - verdict: "SUPPORTED" | "PARTIALLY SUPPORTED" | "UNSUPPORTED"
 
         Scoring rubric:

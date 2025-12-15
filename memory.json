@@ -6,5 +6,9 @@
     "Is the model pipeline extensible ? ": {
         "answer": "Yes.\n\n- Docling supports extensibility of the model pipeline by allowing you to sub-class from BaseModelPipeline or clone the default pipeline to create a custom one.\n- You can instantiate and pass a custom pipeline class as an argument to the main document conversion methods.\n- Custom model implementations must satisfy the Python Callable interface: the __call__ method takes an iterator over page objects and returns an iterator with augmented PagePredictions data.",
         "score": 100
+    },
+    "Does docling support optional OCR?": {
+        "answer": "Yes. Docling provides optional OCR support. It can be enabled for scanned PDFs or bitmap content (using EasyOCR by default) and can be toggled on or off via configuration. The document also notes that OCR is disabled in their published performance benchmarks, indicating OCR can be disabled when not needed.",
+        "score": 100
     }
 }
